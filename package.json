@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/BurlingtonCodeAcademy/tic-tac-toe-www#readme",
   "dependencies": {
+    "cypress": "^3.6.0",
     "node-static": "^0.7.11"
   }
 }

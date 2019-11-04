@@ -2,37 +2,48 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Tic Tac Toe</title>
-  <link type="text/css" rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <h2>Tic Tac Toe</h2>
-  <div class="board">
-    <div id="row-1">
-      <div id="cell-0"></div>
-      <div id="cell-1"></div>
-      <div id="cell-2"></div>
-    </div>
-    <div id="row-2">
-      <div id="cell-3"></div>
-      <div id="cell-4"></div>
-      <div id="cell-5"></div>
-    </div>
-    <div id="row-3">
-      <div id="cell-6"></div>
-      <div id="cell-7"></div>
-      <div id="cell-8"></div>
-    </div>
-  </div>
 
-  <div class="status">
-    <button id="start" type="button">Start Game</button>
-  </div>
-  <script src="main.js"></script>
+    <h2>Tic Tac Toe</h2>
+    <h3 id="status"></h3>
+    <h4 id="clock">Clock</h4>
+
+    <section id="grid">
+        <div id="row1">
+            <div class="square" id="0" value="0"></div>
+            <div class="square" id="1" value="1"></div>
+            <div class="square" id="2" value="2"></div>
+        </div>
+        <div id="row2">
+            <div class="square" id="3" value="3"></div>
+            <div class="square" id="4" value="4"></div>
+            <div class="square" id="5" value="5"></div>
+        </div>
+        <div id="row3">
+            <div class="square" id="6" value="6"></div>
+            <div class="square" id="7" value="7"></div>
+            <div class="square" id="8" value="8"></div>
+        </div>
+    </section>
+    <br>
+    <div style="text-align: center;">
+            <input type="text" placeholder="PlayerOne" id="playerOne"></input>
+            <input type="text" placeholder="PlayerTwo" id="playerTwo"></input>
+            <br>
+            <br>
+            <button id="start">Start Game</button>
+
+    </div>
+
+
+    <script src="main.js"></script>
 </body>
 
 </html>

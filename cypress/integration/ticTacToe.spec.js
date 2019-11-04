@@ -20,23 +20,22 @@ describe("Tic Tac Toe", () => {
       });
     });
 
-    it('the Start button is clickable', ()=>{
+    it('the Start button is clickable', () => {
       cy.get('button#start').click()
     })
   });
 
-  describe("After starting a game", ()=>{
-    beforeEach(()=>{
+  describe("After starting a game", () => {
+    beforeEach(() => {
       cy.get('button#start').click()
     })
 
-    it('the Start button is disabled', ()=>{
+    it('the Start button is disabled', () => {
       cy.get('button#start').should('be.disabled');
     })
 
-    it('the status area should say whose turn it is', ()=>{
+    it('the status area should say whose turn it is', () => {
       cy.get('.status').contains("Player X's turn")
     })
   })
-
 })
