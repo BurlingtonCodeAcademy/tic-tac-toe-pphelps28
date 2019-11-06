@@ -1,19 +1,16 @@
 
 body {
   background-color: black;
-  
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 h2 {
-  position:absolute;
   font-size: 50px;
   text-align: center;
   height: 75px;
   color:#FCAA08;
   margin:0;
   background:linear-gradient(#166EAE,black,black,black,black,black,black);
-  display: flex;
-  padding:10px;
   border-radius:50%
 
 
@@ -39,18 +36,15 @@ h2 {
   position:flex;
   margin: auto;
   width:180px;
-  height:100px;
-  height:fit-content;
   text-align:center;
-  padding: auto;
   left:10%;
-  border:#FCAA08;
-  border-style: double;
+  border:black;
+  border-style: solid;
   color:#5E8045;
   background:black;
-  border-radius: 40%;
-  
-}
+  vertical-align: middle;
+  margin-bottom: 5px;
+  }
 
 #clock{
   position:flex;
@@ -61,10 +55,11 @@ h2 {
   text-align:center;
   padding: auto;
   left:10%;
-  border:#FCAA08;
-  border-style: double;
+  border:black;
+  border-style: solid;
   color:#5E8045;
   background: black;
+  margin-bottom:10px;
 }
 
 #PlayerNumber{
@@ -76,7 +71,7 @@ h2 {
   text-align:center;
   padding: auto;  
   border:#FCAA08;
-  border-style: double;
+  border-style: solid;
   color:#5E8045;
   background:black;
   border-radius:50%
@@ -110,4 +105,8 @@ input[type="text"], textarea {
   border-color:#FCAA08;
   color:#5E8045;
   text-align: center;
-}
+  border-radius:50%;
+  border-style:solid;
+  height: 30px;
+ }
+ 

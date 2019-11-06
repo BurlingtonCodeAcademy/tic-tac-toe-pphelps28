@@ -129,3 +129,34 @@ function randomSelect() {
     console.log(currentPlayer.name)
     isWinner();
 }
+
+
+function AISelect() {
+    currentPlayer = playerO;
+    let squareArray = squares.map((square) => parseInt(square.id))
+    let choices = squareArray.filter(
+        function (e) {
+            return this.indexOf(e) < 0;
+        },
+        usedMoves)
+    console.log(choices) // all square #'s that are available
+    //if choices include all 3 for a random win condition, choose 1 of those 3
+    wins.forEach((win) => {
+        let arr = [];
+        choices.forEach((choice) => {
+            if (win.includes(choice)) {
+                arr.push(choice);
+            } if (arr.length === 3) {
+            }
+        })
+    })
+    //if the other player has 2 out of 3 for a win condition, choose the remaining one
+    let choiceIndex = Math.floor(Math.random() * (choices.length));
+    console.log(choiceIndex)
+    let choice = choices[choiceIndex];
+    console.log(choice);
+    console.log(squares[choice])
+    squares[choice].click();
+    console.log(currentPlayer.name)
+    isWinner();
+}
