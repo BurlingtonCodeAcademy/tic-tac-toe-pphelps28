@@ -1,4 +1,3 @@
-//For next time! terminate/reset clock after turns and wins
 // set up choice to play v human or computer
 // set up computer AI 
 //"smart choice"---> ingrain logic
@@ -11,7 +10,10 @@ let playerO = { name: 'O', moves: [], symbol: 'O' };
 let currentPlayer;
 let wins = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
 let usedMoves = [];
-
+let timer;
+let count = 0
+let twoPlayer = document.getElementById("chooseTwo")
+console.log(document.getElementById("chooseOne").getAttribute('value'))
 status.textContent = 'Enter names, then press start'
 button.addEventListener('click', gameStart)
 
@@ -31,20 +33,20 @@ function gameStart() {
 }
 
 function gameplay() {
+    timer = setInterval(countUp, 1000)
     squares.forEach((square) => { square.addEventListener('click', select) })
 }
 
 function select() {
-
     let square = event.target;
     let i = squares.indexOf(square);
     if (squares.includes(square) && !usedMoves.includes(parseInt(square.id))) {
         square.textContent = currentPlayer.symbol;
         currentPlayer.moves.push(parseInt(squares.slice(i, i + 1)[0].id));
         usedMoves.push(parseInt(squares.slice(i, i + 1)[0].id));
-
         isWinner();
         changePlayer();
+        isWinner();
     } else if (usedMoves.includes(parseInt(square.id))) {
         status.textContent = `INVALID MOVE`;
         setTimeout(() => status.textContent = `${currentPlayer.name}'s Turn`, 1000)
@@ -52,12 +54,22 @@ function select() {
 }
 
 function changePlayer() {
+    if (usedMoves.length === 9) {
+        draw();
+
+    }
     if (status.textContent === `${currentPlayer.name} WINS!!!`) {
         clock.innerText = "Clock"
     }
-    else if (currentPlayer.name === playerX.name) {
+    else if (currentPlayer.name === playerX.name && twoPlayer.checked == true) {
+        currentPlayer = playerO;;
+        randomSelect();
+        isWinner();
+        status.textContent = `${currentPlayer.name}'s Turn`
+    } else if (currentPlayer.name === playerX.name) {
         currentPlayer = playerO;
         status.textContent = `${currentPlayer.name}'s Turn`
+
     } else if (currentPlayer.name === playerO.name) {
         currentPlayer = playerX;
         status.textContent = `${currentPlayer.name}'s Turn`
@@ -77,24 +89,43 @@ function isWinner() {
     })
 }
 
+function draw() {
+    status.textContent = `DRAW!`;
+    isWinner();
+    squares.forEach((square) => { square.removeEventListener('click', select) })
+    button.disabled = false;
+    clearInterval(timer);
+    count = 0;
+}
+
 function endGame() {
     status.textContent = `${currentPlayer.name} WINS!!!`;
     squares.forEach((square) => { square.removeEventListener('click', select) })
     button.disabled = false;
+    clearInterval(timer);
+    count = 0;
 }
 
+function countUp() {
+    count++
+    clock.innerText = count
+}
 
-
-
-//function randomSelect() {
-//    let square = event.target;
-//    let i = squares.indexOf(square);
-//    if (squares.includes(square) && !usedMoves.includes(parseInt(square.id))) {
-//        square.textContent = currentPlayer.symbol;
-//        currentPlayer.moves.push(parseInt(squares.slice(i, i + 1)[0].id));
-//        usedMoves.push(parseInt(squares.slice(i, i + 1)[0].id));
-//
-//        isWinner();
-//        changePlayer();
-//    }
-//}
+function randomSelect() {
+    currentPlayer = playerO;
+    let squareArray = squares.map((square) => parseInt(square.id))
+    let choices = squareArray.filter(
+        function (e) {
+            return this.indexOf(e) < 0;
+        },
+        usedMoves)
+    console.log(choices)
+    let choiceIndex = Math.floor(Math.random() * (choices.length));
+    console.log(choiceIndex)
+    let choice = choices[choiceIndex];
+    console.log(choice);
+    console.log(squares[choice])
+    squares[choice].click();
+    console.log(currentPlayer.name)
+    isWinner();
+}
