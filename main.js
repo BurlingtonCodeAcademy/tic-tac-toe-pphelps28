@@ -1,5 +1,3 @@
-// set up choice to play v human or computer
-// set up computer AI 
 //"smart choice"---> ingrain logic
 
 let button = document.getElementById('start')
@@ -12,8 +10,7 @@ let wins = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0
 let usedMoves = [];
 let timer;
 let count = 0
-let twoPlayer = document.getElementById("chooseTwo")
-console.log(document.getElementById("chooseOne").getAttribute('value'))
+let onePlayer = document.getElementById("chooseOne")
 status.textContent = 'Enter names, then press start'
 button.addEventListener('click', gameStart)
 
@@ -61,7 +58,7 @@ function changePlayer() {
     if (status.textContent === `${currentPlayer.name} WINS!!!`) {
         clock.innerText = "Clock"
     }
-    else if (currentPlayer.name === playerX.name && twoPlayer.checked == true) {
+    else if (currentPlayer.name === playerX.name && onePlayer.checked == true) {
         currentPlayer = playerO;;
         randomSelect();
         isWinner();
@@ -119,17 +116,13 @@ function randomSelect() {
             return this.indexOf(e) < 0;
         },
         usedMoves)
-    console.log(choices)
     let choiceIndex = Math.floor(Math.random() * (choices.length));
-    console.log(choiceIndex)
     let choice = choices[choiceIndex];
-    console.log(choice);
-    console.log(squares[choice])
     squares[choice].click();
-    console.log(currentPlayer.name)
     isWinner();
 }
 
+////EXPERIMENTAL SECTION
 
 function AISelect() {
     currentPlayer = playerO;
@@ -141,15 +134,11 @@ function AISelect() {
         usedMoves)
     console.log(choices) // all square #'s that are available
     //if choices include all 3 for a random win condition, choose 1 of those 3
-    wins.forEach((win) => {
-        let arr = [];
-        choices.forEach((choice) => {
-            if (win.includes(choice)) {
-                arr.push(choice);
-            } if (arr.length === 3) {
-            }
-        })
-    })
+    let winArray = findMoveSet();
+    let winArrayChoice = winArray[Math.floor(Math.random() * 3)]
+    winArrayChoice.click()
+
+
     //if the other player has 2 out of 3 for a win condition, choose the remaining one
     let choiceIndex = Math.floor(Math.random() * (choices.length));
     console.log(choiceIndex)
@@ -159,4 +148,30 @@ function AISelect() {
     squares[choice].click();
     console.log(currentPlayer.name)
     isWinner();
+}
+
+function findBlock() {
+    wins.forEach((win) => {
+        let arr = [];
+        currentPlayer.moves.forEach((move) => {
+            if (win.includes(move)) {
+                arr.push(move);
+            } if (arr.length === 2) {
+                endGame();
+            }
+        })
+    })
+}
+
+function findMoveSet() {
+    wins.forEach((win) => {
+        let arr = [];
+        choices.forEach((choice) => {
+            if (win.includes(choice)) {
+                arr.push(choice);
+            } if (arr.length === 3) {
+                return win;
+            }
+        })
+    })
 }
