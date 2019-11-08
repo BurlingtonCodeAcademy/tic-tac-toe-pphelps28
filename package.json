@@ -4,6 +4,7 @@
   "description": "Project page: http://js-intro.burlingtoncodeacademy.com/projects/tic-tac-toe-www",
   "main": "main.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
