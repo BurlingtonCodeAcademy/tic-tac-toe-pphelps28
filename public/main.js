@@ -1,5 +1,3 @@
-//"smart choice"---> ingrain logic
-
 let button = document.getElementById('start')
 let status = document.getElementById('status')
 let squares = Array.from(document.getElementsByClassName('square'))
@@ -19,7 +17,7 @@ function gameStart() {
     let playerOneName = document.getElementById("playerOne").value
     let playerTwoName = document.getElementById("playerTwo").value
     playerX = { name: playerOneName || 'Player X', moves: [], symbol: 'X' };
-    playerO = { name: playerTwoName || 'Player O', moves: [], symbol: 'O', };
+    playerO = { name: playerTwoName || 'Player O', moves: [], symbol: 'O' };
     squares.forEach((square) => {
         square.textContent = ""
     })
@@ -42,8 +40,7 @@ function select() {
         currentPlayer.moves.push(parseInt(squares.slice(i, i + 1)[0].id));
         usedMoves.push(parseInt(squares.slice(i, i + 1)[0].id));
         isWinner();
-        changePlayer();
-        isWinner();
+        changePlayer();// DON'T CALL AFTER WINNER IS DETERMINED
     } else if (usedMoves.includes(parseInt(square.id))) {
         status.textContent = `INVALID MOVE`;
         setTimeout(() => status.textContent = `${currentPlayer.name}'s Turn`, 1000)
@@ -51,17 +48,13 @@ function select() {
 }
 
 function changePlayer() {
-    if (usedMoves.length === 9) {
-        draw();
-
-    }
     if (status.textContent === `${currentPlayer.name} WINS!!!`) {
         clock.innerText = "Clock"
     }
     else if (currentPlayer.name === playerX.name && onePlayer.checked == true) {
         currentPlayer = playerO;;
         randomSelect();
-        isWinner();
+        currentPlayer = playerX;
         status.textContent = `${currentPlayer.name}'s Turn`
     } else if (currentPlayer.name === playerX.name) {
         currentPlayer = playerO;
@@ -74,13 +67,22 @@ function changePlayer() {
 }
 
 function isWinner() {
+    console.log(currentPlayer.name)
     wins.forEach((win) => {
         let arr = [];
         currentPlayer.moves.forEach((move) => {
             if (win.includes(move)) {
                 arr.push(move);
             } if (arr.length === 3) {
-                endGame();
+                console.log(currentPlayer.name)
+                status.textContent = `${currentPlayer.name} WINS!!!`;
+                squares.forEach((square) => { square.removeEventListener('click', select) })
+                button.disabled = false;
+                clearInterval(timer);
+                count = 0;
+
+            } else if (usedMoves.length === 9) {
+                draw();
             }
         })
     })
@@ -88,10 +90,9 @@ function isWinner() {
 
 function draw() {
     status.textContent = `DRAW!`;
-    isWinner();
+    clearInterval(timer);
     squares.forEach((square) => { square.removeEventListener('click', select) })
     button.disabled = false;
-    clearInterval(timer);
     count = 0;
 }
 
@@ -108,70 +109,76 @@ function countUp() {
     clock.innerText = count
 }
 
-function randomSelect() {
-    currentPlayer = playerO;
-    let squareArray = squares.map((square) => parseInt(square.id))
-    let choices = squareArray.filter(
-        function (e) {
-            return this.indexOf(e) < 0;
-        },
-        usedMoves)
-    let choiceIndex = Math.floor(Math.random() * (choices.length));
-    let choice = choices[choiceIndex];
-    squares[choice].click();
-    isWinner();
-}
+// AI selctor:  if player moves doesn't have 2 win choices in a win array, click a random box in an open win array.  
+// if playerX DOES have 2 moves in a win array, pick the 3rd for that array.  DON'T USE FOREACH, use FOR LOOPS.  YOU CAN'T 
+// USE 'return' or 'break' on a foreach method.  Make a function to determine if a blockable move is present by iterating 
+//through possible win arrays and seeing if player x has 2 of them.  else, randomly pick.  
 
-////EXPERIMENTAL SECTION
-
-function AISelect() {
-    currentPlayer = playerO;
-    let squareArray = squares.map((square) => parseInt(square.id))
-    let choices = squareArray.filter(
-        function (e) {
-            return this.indexOf(e) < 0;
-        },
-        usedMoves)
-    console.log(choices) // all square #'s that are available
-    //if choices include all 3 for a random win condition, choose 1 of those 3
-    let winArray = findMoveSet();
-    let winArrayChoice = winArray[Math.floor(Math.random() * 3)]
-    winArrayChoice.click()
-
-
-    //if the other player has 2 out of 3 for a win condition, choose the remaining one
-    let choiceIndex = Math.floor(Math.random() * (choices.length));
-    console.log(choiceIndex)
-    let choice = choices[choiceIndex];
-    console.log(choice);
-    console.log(squares[choice])
-    squares[choice].click();
-    console.log(currentPlayer.name)
-    isWinner();
-}
-
-function findBlock() {
-    wins.forEach((win) => {
+function isBlockable() { //2.0  
+    for (win of wins) {
         let arr = [];
-        currentPlayer.moves.forEach((move) => {
+        for (move of usedMoves) {
             if (win.includes(move)) {
-                arr.push(move);
-            } if (arr.length === 2) {
-                endGame();
+                arr.push(move)
             }
-        })
-    })
+        } if (arr.length === 2) {
+            return true;
+        }
+    } return false;
 }
 
-function findMoveSet() {
-    wins.forEach((win) => {
+
+
+function randomSelect() {
+    blockable();
+    if (!blockable()) {
+        currentPlayer = playerO;
+        let squareArray = squares.map((square) => parseInt(square.id))
+        let choices = squareArray.filter(
+            function (e) {
+                return this.indexOf(e) < 0;
+            },
+            usedMoves)
+        let choiceIndex = Math.floor(Math.random() * (choices.length));
+        let choice = choices[choiceIndex];
+        console.log(squares[choice])
+        squares[choice].click();
+    } else if (blockable()) {
+        block();
+    }
+}
+
+
+function blockable() {
+    currentPlayer = playerO;
+    for (let i = 0; i < wins.length; i++) {
         let arr = [];
-        choices.forEach((choice) => {
-            if (win.includes(choice)) {
-                arr.push(choice);
-            } if (arr.length === 3) {
-                return win;
+        for (let m = 0; m < playerX.moves.length; m++) {
+            if (wins[i].includes(playerX.moves[m]) && !wins[i].includes(playerO.moves[m])) {
+                arr.push(playerX.moves[m])
+                for (y = 0; y < arr.length; y++) {
+                    if (arr.length === 2 && !playerO.moves.includes(y) && !playerX.moves.includes(y)) {
+                        return true;  //TROUBLE FINDING AN OPEN WIN ARRAY TO BLOCK
+                    }
+                }
             }
-        })
-    })
+        }
+    } return false;
+}
+
+function block() {
+    currentPlayer = playerO;
+    for (let i = 0; i < wins.length; i++) {
+        let arr = [];
+        for (let m = 0; m < playerX.moves.length; m++) {
+            if (wins[i].includes(playerX.moves[m]) && !wins[i].includes(playerO.moves[m])) {
+                arr.push(playerX.moves[m])
+                if (arr.length === 2 && !arr.includes(playerO.moves[m])) {
+                    let blocker = wins[i].filter(w => !arr.includes(w))
+                    console.log(blocker)
+                    return squares[blocker].click()
+                }
+            }
+        }
+    }
 }
