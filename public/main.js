@@ -39,7 +39,7 @@ function select() {
         square.textContent = currentPlayer.symbol;
         currentPlayer.moves.push(parseInt(squares.slice(i, i + 1)[0].id));
         usedMoves.push(parseInt(squares.slice(i, i + 1)[0].id));
-        changePlayer();// DON'T CALL AFTER WINNER IS DETERMINED
+        changePlayer();
     } else if (usedMoves.includes(parseInt(square.id))) {
         status.textContent = `INVALID MOVE`;
         setTimeout(() => status.textContent = `${currentPlayer.name}'s Turn`, 1000)
@@ -47,19 +47,18 @@ function select() {
 }
 
 function changePlayer() {
+    isWinner();
     if (status.textContent === `${currentPlayer.name} WINS!!!`) {
         clock.innerText = "Clock"
     }
     else if (currentPlayer.name === playerX.name && onePlayer.checked == true) {
         currentPlayer = playerO;;
-        console.log(isBlockable())
         status.textContent = `${currentPlayer.name}'s Turn`
-        choiceAI();
+        randomSelect();
     } else if (currentPlayer.name === playerX.name) {
         currentPlayer = playerO;
         status.textContent = `${currentPlayer.name}'s Turn`
     } else if (currentPlayer.name === playerO.name) {
-        console.log(currentPlayer.name)
         currentPlayer = playerX;
         status.textContent = `${currentPlayer.name}'s Turn`
     } isWinner();
@@ -101,8 +100,6 @@ function countUp() {
 
 function isBlockable() {
     for (win of wins) {
-        console.log(containsPlayerXMove(win))
-        console.log(containsPlayerOMove(win))
         if (containsPlayerXMove(win).length === 2 && containsPlayerOMove(win).length === 0) {
             return win;
         }
@@ -125,19 +122,6 @@ function containsPlayerOMove(arr) {
     } return retArr; R
 }
 
-
-function choiceAI() {
-    if (isBlockable()) {
-        console.log(isBlockable())
-        let blocker = isBlockable().filter(e => !playerX.moves.includes(e))
-        console.log(blocker)
-        squares[blocker].click();
-        currentPlayer = playerX;
-    } else if (!isBlockable() && usedMoves.length !== 9) {
-        randomSelect()
-        currentPlayer = playerX;
-    } else isWinner();
-}
 function choices() {
     let squareArray = squares.map((square) => parseInt(square.id))
     let choices = squareArray.filter(
@@ -147,15 +131,41 @@ function choices() {
         usedMoves)
     return choices;
 }
+
 function randomSelect() {
-    currentPlayer = playerO;
     let squareArray = squares.map((square) => parseInt(square.id))
     let choices = squareArray.filter(
         function (e) {
             return this.indexOf(e) < 0;
         },
         usedMoves)
-    let choiceIndex = Math.floor(Math.random() * (choices.length));
-    let choice = choices[choiceIndex];
-    squares[choice].click();
+    for (let choice of choices) {
+        for (win of wins) {
+            if (win.includes(choice) && containsPlayerXMove(win).length === 0 && containsPlayerOMove(win).length === 2) {
+                return squares[choice].click();
+            }
+        }
+    } for (choice of choices) {
+        for (win of wins) {
+            if (containsPlayerXMove(win).length === 2 && containsPlayerOMove(win).length === 0) {
+                let blocker = win.filter(e => !playerX.moves.includes(e))
+                return squares[blocker].click();
+            }
+        }
+    }
+    for (choice of choices) {
+        for (win of wins) {
+            if (choices.includes(4)) {
+                return squares[4].click();
+            }
+        }
+    }
+    for (let choice of choices) {
+        for (win of wins) {
+            if (win.includes(choice) && containsPlayerXMove(win).length === 0) {
+                return squares[choice].click();
+            }
+        }
+    }
 }
+
