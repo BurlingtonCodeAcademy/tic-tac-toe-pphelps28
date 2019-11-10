@@ -63,7 +63,7 @@ h2 {
 }
 
 #PlayerNumber{
-  position: relative;;
+  display: inline-block;
   margin: auto;
   width:180px;
   height:70px;

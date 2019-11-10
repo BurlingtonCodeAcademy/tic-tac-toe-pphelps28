@@ -122,15 +122,6 @@ function containsPlayerOMove(arr) {
     } return retArr; R
 }
 
-function choices() {
-    let squareArray = squares.map((square) => parseInt(square.id))
-    let choices = squareArray.filter(
-        function (e) {
-            return this.indexOf(e) < 0;
-        },
-        usedMoves)
-    return choices;
-}
 
 function randomSelect() {
     let squareArray = squares.map((square) => parseInt(square.id))
@@ -142,13 +133,16 @@ function randomSelect() {
     for (let choice of choices) {
         for (win of wins) {
             if (win.includes(choice) && containsPlayerXMove(win).length === 0 && containsPlayerOMove(win).length === 2) {
+                console.log('win move')
                 return squares[choice].click();
             }
         }
-    } for (choice of choices) {
+    }
+    for (choice of choices) {
         for (win of wins) {
             if (containsPlayerXMove(win).length === 2 && containsPlayerOMove(win).length === 0) {
                 let blocker = win.filter(e => !playerX.moves.includes(e))
+                console.log('blocker')
                 return squares[blocker].click();
             }
         }
@@ -156,16 +150,50 @@ function randomSelect() {
     for (choice of choices) {
         for (win of wins) {
             if (choices.includes(4)) {
+                console.log('center square')
                 return squares[4].click();
             }
         }
     }
     for (let choice of choices) {
+        let arr = [];
         for (win of wins) {
-            if (win.includes(choice) && containsPlayerXMove(win).length === 0) {
-                return squares[choice].click();
+            if (win.includes(choice) && containsPlayerOMove(win).length == 0 && containsPlayerXMove(win).length > 0) {
+
+                arr.push(win);
             }
         }
+        if (arr.length >= 2) {
+            console.log('best choice');
+            arr = (arr.reduce((a, b) => a.concat(b)))
+            let answer = findDuplicates(arr)
+            return squares[answer[0]].click();
+        }
     }
+    if (!choices.includes(4) && choices.length > 0) {
+        let corners = [0, 2, 6, 8]
+        for (corner of corners) {
+            if (!choices.includes(corner)) {
+                let choice = choices[Math.floor(Math.random() * choices.length)]
+                console.log('no corner')
+                return squares[choice].click();
+            }
+        } let choice = corners[Math.floor(Math.random() * corners.length)]
+        console.log('corner')
+        return squares[choice].click()
+    } else isWinner();
 }
 
+function findDuplicates(data) {
+    let result = [];
+    data.forEach(function (element, index) {
+        // Find if there is a duplicate or not
+        if (data.indexOf(element, index + 1) > -1) {
+            // Find if the element is already in the result array or not
+            if (result.indexOf(element) === -1) {
+                result.push(element);
+            }
+        }
+    });
+    return result;
+}
